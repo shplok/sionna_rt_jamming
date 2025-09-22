@@ -4,7 +4,7 @@ from radio_map import compute_rss_map
 from utils import plot_rss
 
 # --- Load scene ---
-scene = load_osm_scene("data\chicago1.osm")
+scene = load_osm_scene(r"data\chicago1.osm")
 
 # --- Create transmitter/receiver ---
 tx, rx = create_tx_rx(scene)
