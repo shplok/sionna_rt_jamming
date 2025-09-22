@@ -1,248 +1,118 @@
+#!/usr/bin/env python3
+"""
+Basic Sionna-RT script that creates a transmitter and places receivers 
+in a grid pattern across a scene.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
-import sionna.rt
-from sionna.rt import Scene, PlanarArray, Transmitter, Receiver, RadioMapSolver
-from sionna.rt import Rectangle, Box  # For creating simple geometry
 
-def create_simple_urban_scene():
-    """
-    Create a simple urban scene programmatically without needing OSM files
-    This avoids all OSM loading issues
-    """
-    
-    # Create empty scene
-    scene = Scene()
-    
-    # Define materials (concrete for buildings)
-    concrete = scene.get('concrete')  # Built-in concrete material
-    
-    # Create several simple rectangular buildings
-    buildings = [
-        # Building 1: Large office building
-        {
-            'size': [40, 30, 50],  # width, depth, height
-            'position': [0, 0, 25],  # x, y, z (center position)
-            'name': 'building_1'
-        },
-        # Building 2: Smaller building
-        {
-            'size': [25, 20, 30],
-            'position': [60, 10, 15],
-            'name': 'building_2'
-        },
-        # Building 3: Another building
-        {
-            'size': [30, 25, 40],
-            'position': [-50, 20, 20],
-            'name': 'building_3'
-        },
-        # Building 4: Street-side building
-        {
-            'size': [20, 15, 25],
-            'position': [20, -40, 12.5],
-            'name': 'building_4'
-        }
-    ]
-    
-    # Add buildings to scene
-    for i, bldg in enumerate(buildings):
-        # Create a box (rectangular building)
-        building = Box(size=bldg['size'], 
-                      position=bldg['position'],
-                      material=concrete,
-                      name=bldg['name'])
-        scene.add(building)
-    
-    # Add ground plane
-    ground = Rectangle(size=[200, 200],  # Large ground plane
-                      position=[0, 0, 0],
-                      material=concrete,
-                      name='ground')
-    scene.add(ground)
-    
-    print(f"Created scene with {len(buildings)} buildings and ground plane")
-    
-    return scene
+# Import Sionna RT
+try:
+    import sionna.rt as rt
+except ImportError:
+    print("Installing sionna-rt...")
+    import os
+    os.system("pip install sionna-rt")
+    import sionna.rt as rt
 
-def run_jammer_simulation():
-    """
-    Run the jammer simulation similar to your MATLAB code
-    """
+def main():
+    """Main function to set up the scene and receivers."""
     
-    print("=== SIONNA RT JAMMER SIMULATION ===")
-    
-    # Create scene
-    print("Creating urban scene...")
-    scene = create_simple_urban_scene()
-    
-    # Configure antennas (isotropic, matching MATLAB)
-    scene.tx_array = PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="V")
-    scene.rx_array = scene.tx_array
-    
-    # Jammer parameters (from MATLAB)
-    P_jam_tx_dbw = 10.0  # 10 dBW
-    P_jam_tx_dbm = P_jam_tx_dbw + 30  # Convert to dBm (40 dBm)
-    f_jam = 1575.42e6  # GPS L1 frequency (Hz)
-    
-    # Observation area (from MATLAB)
-    obs_area = 1e6  # 1,000,000 m^2
-    side_length_m = np.sqrt(obs_area)  # 1000m x 1000m
-    spacing = 10  # 10m grid spacing (reduced from 4m for faster computation)
-    
-    print(f"Transmitter power: {P_jam_tx_dbm} dBm ({P_jam_tx_dbw} dBW)")
-    print(f"Frequency: {f_jam/1e6:.2f} MHz")
-    print(f"Observation area: {side_length_m}m x {side_length_m}m")
-    print(f"Grid spacing: {spacing}m")
-    
-    # Add jammer (transmitter) at center, 10m height
-    jammer = Transmitter(name="jammer",
-                        position=[0.0, 0.0, 10.0],
-                        orientation=[0, 0, 0],
-                        power_dbm=P_jam_tx_dbm)
-    scene.add(jammer)
-    
-    # Compute radio map
-    print("Computing radio map...")
-    rm_solver = RadioMapSolver()
-    
-    # Calculate coverage area
-    half_side = side_length_m / 2
-    
-    # Note: Reduced samples and smaller area for faster computation
-    # You can increase these for higher accuracy
-    rm = rm_solver(scene,
-                   max_depth=3,  # Ray tracing reflections
-                   samples_per_tx=10**5,  # Monte Carlo samples (reduced)
-                   cell_size=(spacing, spacing),  # Grid cell size
-                   center=[0, 0, 1.5],  # Center at jammer x,y, 1.5m receiver height
-                   size=[500, 500],  # 500m x 500m area (reduced for speed)
-                   orientation=[0, 0, 0])
-    
-    # Extract results
-    rss_1d = rm.rss[0].numpy()  # RSS for jammer
-    
-    # Calculate grid dimensions
-    nx = int(rm.size[0].item() / rm.cell_size[0].item())
-    ny = int(rm.size[1].item() / rm.cell_size[1].item())
-    
-    print(f"Grid dimensions: {nx} x {ny} = {len(rss_1d)} points")
-    
-    # Reshape to 2D grid
-    rss_values = rss_1d.reshape(nx, ny)
-    
-    # Create coordinate grids
-    x_start = -rm.size[0].item()/2
-    y_start = -rm.size[1].item()/2
-    
-    x_grid = np.linspace(x_start, x_start + rm.size[0].item(), nx)
-    y_grid = np.linspace(y_start, y_start + rm.size[1].item(), ny)
-    
-    X, Y = np.meshgrid(x_grid, y_grid, indexing='ij')
-    
-    # Compute path loss (matching MATLAB output)
-    path_loss = P_jam_tx_dbm - rss_values
-    
-    # Plot results (similar to MATLAB plots)
-    plot_results(X, Y, rss_values, path_loss, P_jam_tx_dbm)
-    
-    # Print statistics
-    print(f"\n=== SIMULATION RESULTS ===")
-    print(f"RSS range: {rss_values.min():.1f} to {rss_values.max():.1f} dBm")
-    print(f"Mean RSS: {rss_values.mean():.1f} dBm")
-    print(f"Path loss range: {path_loss.min():.1f} to {path_loss.max():.1f} dB")
-    print(f"Mean path loss: {path_loss.mean():.1f} dB")
-    
-    return X, Y, rss_values, path_loss
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import sionna.rt as rt
 
-def plot_results(X, Y, rss_values, path_loss, tx_power):
-    """
-    Plot results similar to MATLAB visualization
-    """
-    
-    plt.figure(figsize=(15, 10))
-    
-    # 1. RSS heatmap
-    plt.subplot(2, 3, 1)
-    im1 = plt.pcolormesh(X, Y, rss_values, shading='auto', cmap='viridis')
-    plt.colorbar(im1, label="RSS [dBm]")
-    plt.xlabel("X [m]")
-    plt.ylabel("Y [m]")
-    plt.title("Received Signal Strength (RSS)")
-    plt.plot(0, 0, 'ro', markersize=10, label='Jammer')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    # 2. 3D RSS surface
-    ax = plt.subplot(2, 3, 2, projection='3d')
-    surf = ax.plot_surface(X, Y, rss_values, cmap='viridis', alpha=0.8)
-    ax.set_xlabel("X [m]")
-    ax.set_ylabel("Y [m]")
-    ax.set_zlabel("RSS [dBm]")
-    ax.set_title("3D RSS Surface")
-    
-    # 3. Path loss heatmap
-    plt.subplot(2, 3, 3)
-    im2 = plt.pcolormesh(X, Y, path_loss, shading='auto', cmap='plasma')
-    plt.colorbar(im2, label="Path Loss [dB]")
-    plt.xlabel("X [m]")
-    plt.ylabel("Y [m]")
-    plt.title("Path Loss")
-    plt.plot(0, 0, 'ro', markersize=10, label='Jammer')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    # 4. RSS distribution
-    plt.subplot(2, 3, 4)
-    plt.hist(rss_values.flatten(), bins=50, alpha=0.7, edgecolor='black')
-    plt.xlabel("RSS [dBm]")
-    plt.ylabel("Count")
-    plt.title("RSS Distribution")
-    plt.grid(True, alpha=0.3)
-    
-    # 5. Path loss distribution
-    plt.subplot(2, 3, 5)
-    plt.hist(path_loss.flatten(), bins=50, alpha=0.7, edgecolor='black', color='orange')
-    plt.xlabel("Path Loss [dB]")
-    plt.ylabel("Count")
-    plt.title("Path Loss Distribution")
-    plt.grid(True, alpha=0.3)
-    
-    # 6. RSS vs Distance from jammer
-    plt.subplot(2, 3, 6)
-    # Calculate distance from jammer (at origin)
-    distances = np.sqrt(X**2 + Y**2)
-    plt.scatter(distances.flatten(), rss_values.flatten(), alpha=0.5, s=1)
-    plt.xlabel("Distance from Jammer [m]")
-    plt.ylabel("RSS [dBm]")
-    plt.title("RSS vs Distance")
-    plt.grid(True, alpha=0.3)
-    
+    # Load scene
+    print("Loading scene...")
+    scene = rt.load_scene(rt.scene.etoile)
+
+    # Single isotropic antennas for simplicity
+    scene.tx_array = rt.PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="V")
+    scene.rx_array = rt.PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="V")
+
+    # Add a transmitter
+    transmitter = rt.Transmitter(
+        name='tx_main',
+        position=[0.0, 0.0, 25.0],
+        orientation=[0.0, 0.0, 0.0],
+        power_dbm=30
+    )
+    scene.add(transmitter)
+    print(f"Added transmitter at position: {transmitter.position}")
+
+    # Receiver grid
+    grid_spacing = 10.0
+    scene_size = 100
+    half_size = scene_size // 2
+    x_positions = np.arange(-half_size, half_size + grid_spacing, grid_spacing)
+    y_positions = np.arange(-half_size, half_size + grid_spacing, grid_spacing)
+
+    print(f"Creating {len(x_positions)} x {len(y_positions)} = {len(x_positions)*len(y_positions)} receivers")
+
+    receiver_positions = []
+    for i, x in enumerate(x_positions):
+        for j, y in enumerate(y_positions):
+            receiver_name = f"rx_{i}_{j}"
+            position = [float(x), float(y), 1.5]
+            receiver = rt.Receiver(
+                name=receiver_name,
+                position=position,
+                orientation=[0.0, 0.0, 0.0]
+            )
+            scene.add(receiver)
+            receiver_positions.append(position)
+
+    print(f"Successfully added {len(receiver_positions)} receivers")
+
+    # Compute paths
+    print("Setting up PathSolver...")
+    path_solver = rt.PathSolver()
+    print("Computing propagation paths...")
+    paths = path_solver(scene, max_depth=3)
+    print("Path computation done.")
+
+    # Compute received power
+    a, tau = paths.cir()
+    print("a.shape:", a.shape)
+
+    # Sum over all axes except the first (receiver index)
+    power_linear = np.sum(np.abs(a)**2, axis=tuple(range(1, a.ndim)))
+    power_db = 10 * np.log10(power_linear + 1e-12)
+
+    # Visualization
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+    # Plot receiver positions
+    rx_positions = np.array(receiver_positions)
+    ax1.scatter(rx_positions[:, 0], rx_positions[:, 1], c='blue', s=10, alpha=0.6, label='Receivers')
+    ax1.scatter(transmitter.position[0], transmitter.position[1], c='red', s=100, marker='^', label='Transmitter')
+    ax1.set_xlabel('X (m)')
+    ax1.set_ylabel('Y (m)')
+    ax1.set_title('Transmitter and Receiver Positions')
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    ax1.axis('equal')
+
+    # Plot received power heatmap
+    power_grid = power_db.reshape(len(y_positions), len(x_positions))
+    im = ax2.imshow(power_grid, extent=[-half_size, half_size, -half_size, half_size],
+                    origin='lower', cmap='viridis', aspect='equal')
+    ax2.scatter(transmitter.position[0], transmitter.position[1], c='red', s=100, marker='^', label='Transmitter')
+    ax2.set_xlabel('X (m)')
+    ax2.set_ylabel('Y (m)')
+    ax2.set_title('Received Signal Strength (dB)')
+    cbar = plt.colorbar(im, ax=ax2)
+    cbar.set_label('Power (dB)')
+
     plt.tight_layout()
     plt.show()
-    
-    # Save results
-    import os
-    os.makedirs('results', exist_ok=True)
-    
-    results = {
-        'X': X,
-        'Y': Y,
-        'rss_values': rss_values,
-        'path_loss': path_loss,
-        'tx_power_dbm': tx_power,
-        'jammer_position': [0, 0, 10],
-        'frequency': 1575.42e6
-    }
-    
-    np.savez('results/sionna_jammer_simulation.npz', **results)
-    print(f"\nResults saved to: results/sionna_jammer_simulation.npz")
 
-if __name__ == "__main__":
-    try:
-        X, Y, rss, path_loss = run_jammer_simulation()
-        print("\n=== SIMULATION COMPLETED SUCCESSFULLY ===")
-        
-    except Exception as e:
-        print(f"\nError during simulation: {e}")
-        print("This might be due to GPU/CUDA issues or missing dependencies")
-        print("Try running with CPU backend if GPU fails")
+    # Statistics
+    print("\nSignal strength statistics:")
+    print(f"Max: {np.max(power_db):.2f} dB")
+    print(f"Min: {np.min(power_db):.2f} dB")
+    print(f"Mean: {np.mean(power_db):.2f} dB")
+    print(f"Std: {np.std(power_db):.2f} dB")
+
+    return scene, receiver_positions
