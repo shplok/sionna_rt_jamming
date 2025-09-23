@@ -10,8 +10,9 @@ import sionna.rt as rt
 
 def main():
     print("Loading scene...")
-    scene = rt.load_scene(rt.scene.etoile)
-    scene.preview()
+    # scene = rt.load_scene(rt.scene.etoile)
+    scene = rt.load_scene(rt.scene.munich)
+    
 
     # initialize antennnas
     scene.tx_array = rt.PlanarArray(num_rows=1, num_cols=1, pattern="iso", polarization="V")
@@ -20,7 +21,7 @@ def main():
     # Add transmitter
     transmitter = rt.Transmitter(
         name='tx_main',
-        position=[0.0, 0.0, 25.0],
+        position=[0.0, 0.0, 5.0],
         orientation=[0.0, 0.0, 0.0],
         power_dbm=30
     )
