@@ -208,3 +208,5 @@ __marimo__/
 
 # open streetmap stuff
 .osm
+.xml
+meshes/
