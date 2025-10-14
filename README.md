@@ -48,7 +48,10 @@ import numpy as np
 
 print(f"Mitsuba variants: {mi.variants()}")
 ```
-
+Should give something like
+```python
+Mitsuba variants: ['scalar_rgb', 'scalar_spectral', 'scalar_spectral_polarized', 'llvm_ad_rgb', 'llvm_ad_mono', 'llvm_ad_mono_polarized', 'llvm_ad_spectral', 'llvm_ad_spectral_polarized', 'cuda_ad_rgb', 'cuda_ad_mono', 'cuda_ad_mono_polarized', 'cuda_ad_spectral', 'cuda_ad_spectral_polarized']
+```
 ## Notes
 
 - For GPU acceleration, use `cuda_ad_rgb` variant if CUDA is available
