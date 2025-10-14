@@ -71,7 +71,7 @@ Mitsuba variants: ['scalar_rgb', 'scalar_spectral', 'scalar_spectral_polarized',
 1. Import the scene using Blosm (OSM data) or model geometry in Blender
 2. Ensure that only "Import Buildings" is selected
 3. Unselect "Import as Single Object"
-4. Create floor plane mesh that stretches all of the buildings and assign a material to it -- Make sure Floor has Background Surface set to a bright value
+4. Create floor plane mesh that stretches all of the buildings and assign a material to it - Make sure Floor has Background Surface set to a bright value
 5. Ensure all materials are assigned to objects [Materials List](https://nvlabs.github.io/sionna/rt/api/radio_materials.html#sionna.rt.ITURadioMaterial)
 6. Set up the scene viewport shading to see materials correctly
 
