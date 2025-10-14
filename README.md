@@ -82,9 +82,8 @@ Mitsuba variants: ['scalar_rgb', 'scalar_spectral', 'scalar_spectral_polarized',
 4. Make sure that Forward is set to "Y Forward" and Up to "Z Up"
 5. Exported XML file can be loaded in Python with: `scene = rt.load_scene("path/to/exported.xml")`
 
-# ------
-# NOTICE: the meshes/ subdir must be at the same level and in same location as the exported.xml file!
-# ------
+**NOTICE: the meshes/ subdir must be at the same level and in same location as the exported.xml file!**
+
 
 ### Step 4: Load in Python
 ```python
