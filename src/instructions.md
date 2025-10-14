@@ -4,7 +4,7 @@
 
 - **Blender**: 3.6 LTS
   - Download: [[Download](https://www.blender.org/download/releases/3-6/)]
-  - Mitsuba Renderer Addon: [[Mitsuba Blender Addon](https://www.mitsuba-renderer.org/)]
+  - Mitsuba Renderer Addon: [[Mitsuba Blender Addon](https://github.com/mitsuba-renderer/mitsuba-blender)]
   - Blender OSM Addon: [[Blender OSM Addon (Blosm)](https://github.com/vvoovv/blosm?tab=readme-ov-file)]
 
 ## Python Installation
