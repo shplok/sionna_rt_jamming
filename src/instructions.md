@@ -13,13 +13,6 @@
 ```
 Python 3.11.9
 ```
-
-### Virtual Environment Setup (Recommended)
-```bash
-python -m venv sionna_env
-sionna_env\Scripts\activate
-```
-
 ### Required Packages and Versions
 
 Install the following packages in order:
@@ -53,13 +46,10 @@ import drjit as dr
 import sionna.rt as rt
 import numpy as np
 
-mi.set_variant("llvm_ad_rgb")
 print("All packages imported successfully!")
 print(f"Mitsuba variants: {mi.variants()}")
 ```
 
 ## Notes
 
-- If you encounter Mitsuba variant errors, use `llvm_ad_rgb` instead of `llvm_ad_mono_polarized`
-- Always set the Mitsuba variant **before** importing from `sionna.rt`
 - For GPU acceleration, use `cuda_ad_rgb` variant if CUDA is available
