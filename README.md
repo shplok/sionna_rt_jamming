@@ -46,7 +46,6 @@ import drjit as dr
 import sionna.rt as rt
 import numpy as np
 
-print("All packages imported successfully!")
 print(f"Mitsuba variants: {mi.variants()}")
 ```
 
