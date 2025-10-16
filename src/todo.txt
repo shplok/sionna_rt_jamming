@@ -1,0 +1,12 @@
+Take a look at materials discrepancy and see if blender can update 
+
+z -> amp of field
+
+Place many receivers in a grid pattern across scene
+For now, ignore 3d plot, get the signal strength using 1-many *
+
+plot in matplotlib (heatmap) * 
+include legend (tx, rx locations) *
+
+try to filter benches if helpful computationally
+try to see if we can load materials directly from osm
