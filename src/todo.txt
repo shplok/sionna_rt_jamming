@@ -1,4 +1,4 @@
 rdiomap documentation/plot documentation
 
-start taking look into pathing i.e. moving jammer.
-paths section
+start taking look into pathing i.e. moving jammer. (very basic complete should talk about next steps)
+https://nvlabs.github.io/sionna/rt/tutorials/Mobility.html
