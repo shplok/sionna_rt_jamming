@@ -10,22 +10,11 @@ https://nvlabs.github.io/sionna/rt/api/paths.html#sionna.rt.Paths
 
 Path Engine Func
 #--------------------------------------------------------------------------------------------------------#
-we need to set up some sort of path engine
-
-start with random walk -- assume constant vel
-
-specify starting positions
-specify the length of the path
-specify sampling rate
-
-curr_pos = prev_pos + rand_offset
-[x, y, 0]
 
 for moving transmitter, be aware of .position of terrain objs
 if within area of a building or other terrain object:
 do something 
 
-Return list of positions
 
 #--------------------------------------------------------------------------------------------------------#
 helper function that could call the function multiple times for the same jammer
@@ -42,15 +31,6 @@ options for such:
 3. Boolean to check that all the lengths of the seuqences are equal else throw error
 4. don't pad anything, when jammer ends path it's removed
 #--------------------------------------------------------------------------------------------------------#
-
-
-
-create motion engine class
-
-
-
-
-
 
 
 
