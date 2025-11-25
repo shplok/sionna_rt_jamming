@@ -55,3 +55,8 @@ create motion engine class
 
 
 Research Collision logic for buildings from open street map --- it seems that on export, objects are compartmentalized?
+
+print(scene.get("Chicago_Water_Tower-itu_concrete").mi_mesh.bbox())
+
+# when iterating, 
+
