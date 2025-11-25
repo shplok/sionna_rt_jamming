@@ -35,7 +35,7 @@ matrix (each row is the sequence of positions of each jammer)
 
 max dimensions would be reliant on the longest path speicified  (flag)
 
-2 options for such:
+options for such:
 
 1. shorter path (from end of shorter path to end of simulation, jammer remains static)
 2. pad the matrix from the beginning with static movement until len(path) == len[0] - padded 0s
@@ -54,5 +54,4 @@ create motion engine class
 
 
 
-Research Collision logic for buildings from osm
-
+Research Collision logic for buildings from open street map --- it seems that on export, objects are compartmentalized?
