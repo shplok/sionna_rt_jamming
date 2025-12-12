@@ -1,4 +1,3 @@
-# scene_objects.py
 import sionna.rt as rt
 from sionna.rt import Camera, Transmitter
 

@@ -1,4 +1,3 @@
-# motion_engine.py
 import numpy as np
 
 def generate_random_walk(starting_position, num_steps, step_size, 
