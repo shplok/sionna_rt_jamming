@@ -9,3 +9,8 @@ https://nvlabs.github.io/sionna/rt/api/paths.html#sionna.rt.Paths
 params:
 matrix (each row is the sequence of positions of each jammer)
 print(scene.get("Chicago_Water_Tower-itu_concrete").mi_mesh.bbox())
+
+
+
+todo for next week
+push code with given folder creates set/dict with bounding boxes
