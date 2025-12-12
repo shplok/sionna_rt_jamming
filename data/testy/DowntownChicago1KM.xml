@@ -11,6 +11,21 @@
 
 <!-- Materials -->
 
+	<bsdf type="twosided" id="mat-itu_very_dry_ground" name="mat-itu_very_dry_ground">
+		<bsdf type="principled" name="bsdf">
+			<rgb value="0.800000 0.800000 0.800000" name="base_color"/>
+			<float name="spec_tint" value="0.000000"/>
+			<float name="spec_trans" value="0.000000"/>
+			<float name="metallic" value="0.000000"/>
+			<float name="anisotropic" value="0.000000"/>
+			<float name="roughness" value="0.250000"/>
+			<float name="sheen" value="0.000000"/>
+			<float name="sheen_tint" value="0.500000"/>
+			<float name="clearcoat" value="0.000000"/>
+			<float name="clearcoat_gloss" value="0.000900"/>
+			<float name="specular" value="0.500000"/>
+		</bsdf>
+	</bsdf>
 	<bsdf type="diffuse" id="mat-itu_concrete" name="mat-itu_concrete">
 		<rgb value="1.000000 0.932309 0.816664" name="reflectance"/>
 	</bsdf>
@@ -29,17 +44,7 @@
 	<shape type="ply" id="mesh-Plane" name="mesh-Plane">
 		<string name="filename" value="meshes/Plane.ply"/>
 		<boolean name="face_normals" value="true"/>
-		<ref id="mat-itu_concrete" name="bsdf"/>
-	</shape>
-	<shape type="ply" id="mesh-2_East_Erie-itu_concrete" name="mesh-2_East_Erie-itu_concrete">
-		<string name="filename" value="meshes/2_East_Erie-itu_concrete.ply"/>
-		<boolean name="face_normals" value="true"/>
-		<ref id="mat-itu_concrete" name="bsdf"/>
-	</shape>
-	<shape type="ply" id="mesh-2_East_Erie-itu_metal" name="mesh-2_East_Erie-itu_metal">
-		<string name="filename" value="meshes/2_East_Erie-itu_metal.ply"/>
-		<boolean name="face_normals" value="true"/>
-		<ref id="mat-itu_metal" name="bsdf"/>
+		<ref id="mat-itu_very_dry_ground" name="bsdf"/>
 	</shape>
 	<shape type="ply" id="mesh-Museum_of_Contemporary_Art-itu_concrete" name="mesh-Museum_of_Contemporary_Art-itu_concrete">
 		<string name="filename" value="meshes/Museum_of_Contemporary_Art-itu_concrete.ply"/>
@@ -3466,6 +3471,16 @@
 	</shape>
 	<shape type="ply" id="mesh-element_193-itu_metal" name="mesh-element_193-itu_metal">
 		<string name="filename" value="meshes/element_193-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-2_East_Erie-itu_concrete" name="mesh-2_East_Erie-itu_concrete">
+		<string name="filename" value="meshes/2_East_Erie-itu_concrete.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_concrete" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-2_East_Erie-itu_metal" name="mesh-2_East_Erie-itu_metal">
+		<string name="filename" value="meshes/2_East_Erie-itu_metal.ply"/>
 		<boolean name="face_normals" value="true"/>
 		<ref id="mat-itu_metal" name="bsdf"/>
 	</shape>
