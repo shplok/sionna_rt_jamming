@@ -13,4 +13,4 @@ print(scene.get("Chicago_Water_Tower-itu_concrete").mi_mesh.bbox())
 
 
 todo for next week
-push code with given folder creates set/dict with bounding boxes
+push code with given folder creates set/dict with bounding boxes and collision function
