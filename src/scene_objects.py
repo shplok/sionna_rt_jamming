@@ -147,4 +147,3 @@ def visualize_scene_collisions(obstacles, paths=None, title="Obstacle Validation
     
     plt.legend()
     plt.show()
-
