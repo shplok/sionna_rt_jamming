@@ -207,6 +207,6 @@ marimo/_lsp/
 __marimo__/
 
 # open streetmap stuff
-.osm
-.xml
-meshes/
+# .osm
+# .xml
+# meshes/
